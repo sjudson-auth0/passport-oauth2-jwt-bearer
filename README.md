@@ -20,6 +20,8 @@ The JSON Web Token (JWT) Bearer Token Profiles for OAuth 2.0 client authenticati
 using a JWT.  The strategy requires a `verify` callback,
 which accepts those credentials and calls `done` providing a client.
 
+    ClientJWTBearerStrategy = require('passport-oauth2-jwt-bearer').Strategy;
+
     passport.use(new ClientJWTBearerStrategy(
       function(claimSetIss, done) {
         Clients.findOne({ clientId: claimSetIss }, function (err, client) {
