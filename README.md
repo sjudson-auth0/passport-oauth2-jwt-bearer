@@ -6,7 +6,7 @@ JSON Web Token (JWT) Bearer Token Profiles for OAuth 2.0 client authentication s
 This module lets you authenticate requests containing client credentials in a JWT sent in the
 request body's assertion field, as [defined](http://tools.ietf.org/html/draft-jones-oauth-jwt-bearer-01#section-2.1)
 by the JSON Web Token (JWT) Bearer Token Profiles for OAuth 2.0 draft.  These credentials are typically used to protect
-the token endpoint and used as an alternative to HTTP Basic authentication.  This module is modeled off of Google's OAuth 2.0 [Server to Server Applications](https://developers.google.com/accounts/docs/OAuth2ServiceAccount).
+the token endpoint and used as an alternative to HTTP Basic authentication.  This module is modeled off of Google's OAuth 2.0 [Server to Server Applications](https://developers.google.com/accounts/docs/OAuth2ServiceAccount).  This module can be used with the [oauth2orize-jwt-bearer](https://github.com/xtuple/oauth2orize-jwt-bearer) module to create a JWT OAuth 2.0 exchange scenario server.
 
 ## Install
 
