@@ -460,6 +460,58 @@ vows.describe('ClientJWTBearerStrategy').addBatch({
     'should throw an error': function () {
       assert.throws(function() { new ClientJWTBearerStrategy(); });
     }
+  },
+
+  'strategy with passReqToCallback=true option': {
+    topic: function() {
+      var strategy = new ClientJWTBearerStrategy({passReqToCallback:true}, function(req, claimSetIss, done) {
+        assert.isNotNull(req);
+        if (claimSetIss == 'c1234') {
+          done(null, { id: claimSetIss });
+        } else {
+          done(null, false);
+        }
+      });
+      return strategy;
+    },
+
+    'after augmenting with actions': {
+      topic: function(strategy) {
+        var self = this;
+        var req = {};
+        var header = {"alg":"RS256","typ":"JWT"};
+        var claimSet = {"iss": "c1234"};
+        var signature = 'some-fake-sig';
+        var contents = [];
+
+        contents.push(base64urlEncode(JSON.stringify(header)));
+        contents.push(base64urlEncode(JSON.stringify(claimSet)));
+        contents.push(signature);
+
+        strategy.success = function(user) {
+          self.callback(null, user);
+        };
+        strategy.fail = function() {
+          self.callback(new Error('should-not-be-called'));
+        };
+        strategy.error = function() {
+          self.callback(new Error('should-not-be-called'));
+        };
+
+        req.body = {};
+        req.body['assertion'] = contents.join('.');
+        process.nextTick(function () {
+          strategy.authenticate(req);
+        });
+      },
+
+      'should not generate an error' : function(err, user) {
+        assert.isNull(err);
+      },
+      'should authenticate' : function(err, user) {
+        assert.equal(user.id, 'c1234');
+      }
+    }
   }
 
 }).export(module);
