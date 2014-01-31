@@ -21,7 +21,7 @@
   } ],
   "main": "./lib/passport-oauth2-jwt-bearer",
   "dependencies": {
-    "passport": "~0.1.1",
+    "passport-strategy": "1.x.x",
     "jws": "0.2.x"
   },
   "devDependencies": {
