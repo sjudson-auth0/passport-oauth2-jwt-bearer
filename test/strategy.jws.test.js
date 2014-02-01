@@ -180,4 +180,37 @@ describe('Strategy', function() {
     });
   });
   
+  describe('handling a request with an invalid JWS due to being expired', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0IiwiZXhwIjoxMzkxMjE3NjM2fQ.tYp7i4F8w5JjTmphkAK9GS3YodTnSM4ProPXHFPeOFMA-Yevh15ztWQUEZg_O7iRcgZgR6zJUV1TdVrl8HwVc8ZZ6-xJ60afoK-Qa-F6Xdm6vXxCzlkT_cxRuQRRwT4nJ7oJBWOZLbfEUz99BXHqtUfUmMgA9MXYRwvZWFtbomM'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without status', function() {
+      expect(status).to.be.undefined;
+    });
+  });
+  
 });
