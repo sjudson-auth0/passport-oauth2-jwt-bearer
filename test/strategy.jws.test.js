@@ -213,4 +213,37 @@ describe('Strategy', function() {
     });
   });
   
+  describe('handling a request with an invalid JWS due to not being acceptable before time', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0IiwibmJmIjo3NzAyNTg4ODAwLCJleHAiOjc3MDI2NzUyMDB9.FlmQPYCOV-gxVUXDMLHP_yURaL9EUhNVmpZ8KrpujYtR3oBFTfeMS6xWUImnKjHLsR5Zt1BnIA_CAkLueQRYDV941LKkmbZDqALVMx_jls4lSA8apw1GriPkGCe6aacWeA6mkXknx70g_0zu-1PQK_32pShQei8YXNwjK2aBdJg'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without status', function() {
+      expect(status).to.be.undefined;
+    });
+  });
+  
 });
