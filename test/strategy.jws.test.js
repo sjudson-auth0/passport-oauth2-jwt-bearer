@@ -114,4 +114,70 @@ describe('Strategy', function() {
     });
   });
   
+  describe('handling a request with an invalid JWS due to missing aud claim', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImV4cCI6NzcwMjU4ODgwMH0.SXrKIJ_L71AVgxNsQ_jE81_LzcgIx0UzFLHbvzfyXqNGjsIjMQepsHBgq1H57cjPnIpzPS2pxDhId8mrDHI7FDulRDNZAXI4I9UPYMgXsVhlZlCJ9TfxWP43709gTkM3VenQqfRE6yq7LaqKYpuRGIRZ-vrwVKfZ2EeNzpAU4t0'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without bad request status', function() {
+      expect(status).to.equal(400);
+    });
+  });
+  
+  describe('handling a request with an invalid JWS due to missing exp claim', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0In0.Nfq-RMvWEqosgBdioUDYhISr9LhQUk3FTtgMifeXP0BOGQ0K1aIp2CRWyfynZP2sw2S73niAJGnMV83u-NG5UwF2eDGRsGIQoK5FYW4R9yPaHEXybQ-VL0aej6T862MCT7-IUtHEi_LC7ui4D9uO-8r8lYxik8GJzJzvYR7qXFA'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without bad request status', function() {
+      expect(status).to.equal(400);
+    });
+  });
+  
 });
