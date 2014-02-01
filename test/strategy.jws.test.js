@@ -10,8 +10,8 @@ describe('Strategy', function() {
       if (issuer != 'https://jwt-idp.example.com') { return done('unexpected issuer'); }
       return fs.readFile(__dirname + '/keys/rsa/cert.pem', 'utf8', done);
     },
-    function(subject, done) {
-      return done(null, { id: '1234', subject: subject });
+    function(issuer, subject, done) {
+      return done(null, { id: '1234', issuer: issuer, subject: subject });
     }
   );
   
@@ -42,6 +42,7 @@ describe('Strategy', function() {
     it('should authenticate', function() {
       expect(user).to.be.an('object');
       expect(user.id).to.equal('1234');
+      expect(user.issuer).to.equal('https://jwt-idp.example.com');
       expect(user.subject).to.equal('mailto:mike@example.com');
     });
   });
