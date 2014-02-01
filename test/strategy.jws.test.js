@@ -80,6 +80,45 @@ describe('Strategy', function() {
     });
   });
   
+  describe('handling a request with an invalid JWS due to invalid signature', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+        
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          // header = { alg: 'RS256' }
+          // payload = { iss: 'https://jwt-idp.example.com',
+          //   sub: 'mailto:mike@example.com',
+          //   aud: 'https://jwt-rp.example.net',
+          //   exp: 7702588800 }
+          
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0IiwiZXhwIjo3NzAyNTg4ODAwfQ.KIOxvBb70_PdnesRJNtF37IkaPoCmzA9uC4wQjd2Y2nfh2zDMcuK1B0M2iOCQi8E35xrZH-7EjJJN4NSAUREDyWyNXzMUWTdPTWUjsrvyW1aOHNiYBUojXnf37krg2vS3HksoUtXdmp5cvlCBXW0zp10nXSGSfbWE9HAxKQrsfX'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without status', function() {
+      expect(status).to.be.undefined;
+    });
+  });
+  
   describe('handling a request with an invalid JWS due to missing iss claim', function() {
     var challenge, status;
     
