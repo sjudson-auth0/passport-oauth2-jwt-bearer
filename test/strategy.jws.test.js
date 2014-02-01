@@ -6,6 +6,7 @@ var chai = require('chai')
 describe('Strategy', function() {
   
   var strategy = new Strategy(
+    { audience: 'http://www.example.com/' },
     function(issuer, done) {
       if (issuer != 'https://jwt-idp.example.com') { return done('unexpected issuer'); }
       return fs.readFile(__dirname + '/keys/rsa/cert.pem', 'utf8', done);

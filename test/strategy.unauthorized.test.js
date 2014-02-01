@@ -5,6 +5,7 @@ var chai = require('chai')
 describe('Strategy', function() {
   
   var strategy = new Strategy(
+    { audience: 'http://www.example.com/' },
     function() {},
     function() {}
   );
