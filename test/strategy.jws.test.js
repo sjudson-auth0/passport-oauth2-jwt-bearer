@@ -47,4 +47,70 @@ describe('Strategy', function() {
     });
   });
   
+  describe('handling a request with an invalid JWS due to missing iss claim', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0IiwiZXhwIjo3NzAyNTg4ODAwfQ.qHG0DU9Jc8uVC7sAQb6hgCPQYpcW9ltawxhelLEclZTK_hoSTy4vycme4lShOS0MWn_sbvLXbzm8c6DkSsOP3Tq_MzcFHCOAQyUWfqFHN6311-dkaIAzK9DFRlqGSq-shTh9DGx55I4Va4WTPgA0Y5Lf4O3b5GWKzRAtfmNoNIA'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without bad request status', function() {
+      expect(status).to.equal(400);
+    });
+  });
+  
+  describe('handling a request with an invalid JWS due to missing sub claim', function() {
+    var challenge, status;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+          
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJhdWQiOiJodHRwczovL2p3dC1ycC5leGFtcGxlLm5ldCIsImV4cCI6NzcwMjU4ODgwMH0.U-Q-x-w2eBfwmLVm1iSCstesgfGUGKI9Ge8aPMnUSx7hvHJVfE3dKl3Yf_3bI5eSA6bFoiTQgylJcRnQngfCxLlJGuIpYThbkCNlWGTCUrY7ZM1eRKECIFxDwdnoHrO1IZrVNkvkQrAGl5-cdveQvTa8LReMzUstX58NYU32Y-0'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+    
+    it('should fail without bad request status', function() {
+      expect(status).to.equal(400);
+    });
+  });
+  
 });
