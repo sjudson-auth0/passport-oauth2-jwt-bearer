@@ -16,6 +16,38 @@ describe('Strategy', function() {
     }
   );
   
+  describe('handling a request with a valid JWS with type in JWT header', function() {
+    var user;
+    
+    before(function(done) {
+      chai.passport.use(strategy)
+        .success(function(u) {
+          user = u;
+          done();
+        })
+        .req(function(req) {
+          // header = { typ: 'JWT', alg: 'RS256' }
+          // payload = { iss: 'https://jwt-idp.example.com',
+          //   sub: 'mailto:mike@example.com',
+          //   aud: 'https://jwt-rp.example.net',
+          //   exp: 7702588800 }
+          
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vand0LXJwLmV4YW1wbGUubmV0IiwiZXhwIjo3NzAyNTg4ODAwfQ.I4PTqSky9yw5DMx8SEQ72JtrEhSo_Ra0wioCNnI3Od1QEQyG0XSyYnEnJJweZIgVyleX7yqXHUnvPQNBvuHwpgguXDqExx91cttEA4LnlCOCG6_dGa_SzrTthKdI5WlPrQ6yDr2PxG0izdnIZVgeeRxKpMQZImnfaZ22EXWnvXA'
+          };
+        })
+        .authenticate();
+    });
+    
+    it('should authenticate', function() {
+      expect(user).to.be.an('object');
+      expect(user.id).to.equal('1234');
+      expect(user.issuer).to.equal('https://jwt-idp.example.com');
+      expect(user.subject).to.equal('mailto:mike@example.com');
+    });
+  });
+  
   describe('handling a request with a valid JWS without type in JWT header', function() {
     var user;
     
