@@ -9,10 +9,16 @@ describe('Strategy', function() {
     expect(strategy.name).to.equal('oauth2-jwt-bearer');
   });
   
-  it('should throw if constructed without an audience option', function() {
+  it('should throw if constructed without an audience option and without skipAudienceCheck', function() {
     expect(function() {
-      new Strategy();
+      new Strategy(function(){}, function(){});
     }).to.throw(TypeError, 'OAuth 2.0 JWT bearer strategy requires an audience option');
+  });
+
+  it('should not throw if constructed without an audience option but with skipAudienceCheck', function() {
+    expect(function() {
+      new Strategy({ skipAudienceCheck: true }, function(){}, function(){});
+    }).to.not.throw(TypeError, 'OAuth 2.0 JWT bearer strategy requires an audience option');
   });
   
   it('should throw if constructed without a keying callback', function() {
