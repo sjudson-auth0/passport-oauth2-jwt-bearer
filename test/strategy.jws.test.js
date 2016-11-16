@@ -11,8 +11,8 @@ describe('Strategy', function() {
       if (issuer != 'https://jwt-idp.example.com') { return done('unexpected issuer'); }
       return fs.readFile(__dirname + '/keys/rsa/cert.pem', 'utf8', done);
     },
-    function(issuer, subject, done) {
-      return done(null, { id: '1234', issuer: issuer, subject: subject });
+    function(issuer, headers, payload, done) {
+      return done(null, { id: '1234', issuer: issuer, subject: payload.sub });
     }
   );
   

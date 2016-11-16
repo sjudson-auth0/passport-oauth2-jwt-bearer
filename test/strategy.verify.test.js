@@ -6,15 +6,15 @@ var chai = require('chai')
 describe('Strategy', function() {
 
   describe('without request', function() {
-  
+
     var strategy = new Strategy(
-      { audience: 'https://jwt-rp.example.net' },
+    { audience: 'https://jwt-rp.example.net' },
       function(issuer, done) {
         if (issuer != 'https://jwt-idp.example.com') { return done('unexpected issuer'); }
         return fs.readFile(__dirname + '/keys/rsa/cert.pem', 'utf8', done);
       },
-      function(issuer, headers, payload, done) {
-        return done(null, { id: '1234', issuer: issuer, subject: payload.sub, member: payload['http://claims.example.com/member'] });
+      function(issuer, done) {
+        return done(null, { id: '1234', issuer: issuer});
       }
     );
 
@@ -47,22 +47,20 @@ describe('Strategy', function() {
         expect(user).to.be.an('object');
         expect(user.id).to.equal('1234');
         expect(user.issuer).to.equal('https://jwt-idp.example.com');
-        expect(user.subject).to.equal('mailto:mike@example.com');
-        expect(user.member).to.be.true;
       });
     });
   });
 
   describe('with request', function() {
-  
+
     var strategy = new Strategy(
       { audience: 'https://jwt-rp.example.net', passReqToCallback: true },
       function(req, issuer, done) {
         if (issuer != 'https://jwt-idp.example.com') { return done('unexpected issuer'); }
         return fs.readFile(__dirname + '/keys/rsa/cert.pem', 'utf8', done);
       },
-      function(req, issuer, headers, payload, done) {
-        return done(null, { id: '1234', issuer: issuer, subject: payload.sub, member: payload['http://claims.example.com/member'] });
+      function(req, issuer, done) {
+        return done(null, { id: '1234', issuer: issuer});
       }
     );
 
@@ -95,8 +93,6 @@ describe('Strategy', function() {
         expect(user).to.be.an('object');
         expect(user.id).to.equal('1234');
         expect(user.issuer).to.equal('https://jwt-idp.example.com');
-        expect(user.subject).to.equal('mailto:mike@example.com');
-        expect(user.member).to.be.true;
       });
     });
   });
