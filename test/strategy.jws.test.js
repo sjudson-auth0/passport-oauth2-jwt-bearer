@@ -251,7 +251,40 @@ describe('Strategy', function() {
       expect(status).to.equal(400);
     });
   });
-  
+
+  describe('handling a request with an aud claim that is not that passed in configuration', function() {
+    var challenge, status;
+
+    before(function(done) {
+      chai.passport.use(strategy)
+        .fail(function(c, s) {
+          if (typeof c == 'number') {
+            s = c;
+            c = undefined;
+          }
+
+          challenge = c;
+          status = s;
+          done();
+        })
+        .req(function(req) {
+          req.body = {
+            'client_assertion_type': 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+            'client_assertion': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsImF1ZCI6ImRpZmZlcmVudGF1ZGllbmNlIiwiZXhwIjo3NzAyNTg4ODAwfQ.EzpsldV9Z_VWxlpX3GLgtFIALgoCI8HZ8iB2-4tU-7YQCP02mKnWdqz7bT4Gcafnlq1tzeYahvPbR6lX0DgtjVkQ29PYwegwA2DqmLsB3Ih44Bzu7m7zTgFR1UmoHDKk-CHWuFeVPqx2oWFVC_RGkAzzfkI1jfnwStNd20ydhD0'
+          };
+        })
+        .authenticate();
+    });
+
+    it('should fail without challenge', function() {
+      expect(challenge).to.be.undefined;
+    });
+
+    it('should fail without status', function() {
+      expect(status).to.be.undefined;
+    });
+  });
+
   describe('handling a request with an invalid JWS due to missing exp claim', function() {
     var challenge, status;
     
